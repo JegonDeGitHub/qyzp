@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyzp.dao.ResumeDao">
+    <insert id="insert" parameterType="com.qyzp.bean.Resume" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO resume(resume,user_id,resume_name,base_path,pic_path)
+         VALUES(#{resume},#{userId},#{resumeName},#{basePath},#{picPath})
+    </insert>
+
+    <update id="update" parameterType="com.qyzp.bean.Resume">
+        UPDATE resume
+        <set>
+            <if test="resume != null">resume = #{resume},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="resumeName != null">resume_name = #{resumeName},</if>
+            <if test="basePath != null">base_path = #{basePath},</if>
+            <if test="picPath != null">pic_path = #{picPath},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM resume WHERE id=#{id}
+    </delete>
+
+    <select id="selectById" resultType="com.qyzp.bean.Resume">
+        SELECT * FROM resume WHERE id=#{id}
+    </select>
+    <!--根据用户id搜索用户的所属简历-->
+    <select id="selectByUserId" resultType="com.qyzp.bean.Resume">
+        SELECT * FROM resume where user_id=#{userId}
+    </select>
+
+    <select id="select" resultType="com.qyzp.bean.Resume">
+        SELECT * FROM resume
+    </select>
+
+    <select id="selectTotal" resultType="java.lang.Integer">
+        SELECT count(*) FROM resume WHERE user_id=#{userId}
+    </select>
+
+    <!--//企业中心-->
+    <!--//根据传进来的简历id集合搜索-->
+    <select id="selectResumeByCompanyId" resultType="com.qyzp.bean.Resume">
+        SELECT * FROM resume WHERE id in
+        <foreach collection="list" index="index" item="ids" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </select>
+</mapper>

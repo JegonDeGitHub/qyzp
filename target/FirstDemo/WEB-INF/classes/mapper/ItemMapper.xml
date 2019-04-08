@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhuoyue.dao.ItemDao">
+
+    <resultMap id="ItemResultMap" type="com.zhuoyue.bean.Item">
+        <id property="id" column="id"/>
+        <result property="parent_id" column="parent_id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <!--列名为id的自增长为true -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO table_item(parent_id,name) VALUES(#{parent_id},#{name})
+    </insert>
+
+    <select id="selectById" resultType="com.zhuoyue.bean.Item" >
+        select * from  table_item where id=#{id}
+    </select>
+
+    <select id="listAll" resultMap="ItemResultMap">
+        SELECT * from table_item
+    </select>
+
+    <select id="listByParent_Id" resultMap="ItemResultMap" parameterType="java.lang.Integer">
+        SELECT id,parent_id,name FROM table_item
+        <where>
+           <choose>
+               <when test="parent_id != null">parent_id=#{parent_id}</when>
+               <otherwise>parent_id IS NULL</otherwise>
+           </choose>
+        </where>
+    </select>
+
+    <select id="list" resultType="com.zhuoyue.bean.Item">
+        SELECT id,parent_id,name FROM table_item
+    </select>
+
+
+    <update id="updateById">
+        UPDATE table_item
+        <set>
+            <if test="parent_id != null">parent_id = #{parent_id},</if>
+            <if test="name != null">name = #{name},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteItemById" >
+        DELETE FROM table_item WHERE id=#{id}
+    </delete>
+</mapper>

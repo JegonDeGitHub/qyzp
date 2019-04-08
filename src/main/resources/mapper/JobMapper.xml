@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qyzp.dao.JobDao">
+
+    <resultMap id="JobResultMap" type="com.qyzp.bean.Job">
+        <id property="id" column="id"/>
+        <result property="jobName" column="jobName"/>
+        <result property="jobType" column="jobType"/>
+        <result property="companyId" column="company_id" />
+        <result property="companyName" column="company_name" />
+        <result property="companyAddress" column="company_address" />
+        <result property="recruitNumber" column="recruitNumber" />
+        <result property="educationRequire" column="educationRequire" />
+        <result property="salary" column="salary" />
+        <result property="detail" column="detail" />
+        <!--<result property="unitId" column="unit_id"/>&lt;!&ndash;java驼峰命名形式 数据库下划线形式&ndash;&gt;-->
+        <!--<association property="unit" column="unit_id" select="com.qyzp.dao.UnitDao.queryUnitByUserId"/>&lt;!&ndash;Unit对象与 unit_id属性绑定 select：子查询&ndash;&gt;-->
+        <!--<collection property="accounts" column="id" select="com.qyzp.dao.UserAccountDao.queryAccountByUserId"/>-->
+    </resultMap>
+
+    <!--<resultMap id="baseResultMap" type="com.qyzp.bean.Company">
+        <id property="id" column="id"/>
+        <result property="uname" column="uname"/>
+        <result property="roleType" column="role_type" />
+        <result property="unitId" column="unit_id"/>&lt;!&ndash;java驼峰命名形式 数据库下划线形式&ndash;&gt;
+        <association property="unit" column="unit_id" select="com.qyzp.dao.UnitDao.queryUnitByUserId"/>&lt;!&ndash;Unit对象与 unit_id属性绑定 select：子查询&ndash;&gt;
+    </resultMap>
+
+    <resultMap id="detailResultMap" type="com.qyzp.bean.User">
+        <collection property="accounts" column="id" select="com.qyzp.dao.UserAccountDao.queryAccountByUserId"/>
+    </resultMap>-->
+
+    <!--列名为id的自增长为true --><!--添加岗位-->
+    <!--id,jobName,jobType,company_id,company_name,company_address,recruitNumber,educationRequire,salary,detail-->
+    <insert id="addJob" parameterType="com.qyzp.bean.Job" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO job(jobName,jobType,company_id,company_name,company_address,recruitNumber,educationRequire,salary,detail) VALUE (#{jobName},#{jobType},#{companyId},#{companyName},#{companyAddress},#{recruitNumber},#{educationRequire},#{salary},#{detail})
+    </insert>
+
+    <!--查询所有岗位信息-->
+    <select id="queryAllJob" resultMap="JobResultMap">
+        select * from job
+    </select>
+    <!--根据岗位id查询岗位信息-->
+    <select id="queryJobById" resultMap="JobResultMap">
+        select * from job where id=#{id}
+    </select>
+    <!--根据公司id查询岗位信息-->
+    <select id="queryByCompanyId" resultMap="JobResultMap">
+        select * from job where company_id=#{companyId}
+    </select>
+    <!--根据字段名称搜索-->
+    <!--id,jobName,jobType,company_id,company_name,company_address,recruitNumber,educationRequire,salary,detail-->
+    <select id="search" resultMap="JobResultMap" parameterType="java.lang.String">
+        select * from job where jobName like CONCAT('%',#{key},'%') or jobType like  CONCAT('%',#{key},'%') or company_name like  CONCAT('%',#{key},'%')
+        <!--<where>-->
+            <!--<if test="key !=null and key !=''">-->
+            <!--   (jobName like "%"#{key}"%" or jobType like  "%"#{key}"%" or company_name like "%"#{key}"%" )-->
+            <!--</if>-->
+        <!--</where>-->
+    </select>
+
+    <!--修改岗位信息(根据id）-->
+    <!--//id jobName jobType company_id company_name company_address recruitNumber educationRequire salary detail-->
+    <update id="updateJob" parameterType="com.qyzp.bean.Job">
+        UPDATE job
+        <set>
+            <if test="jobName != null">jobName = #{jobName},</if>
+            <if test="jobType != null">jobType = #{jobType},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="companyName != null">company_name = #{companyName},</if>
+            <if test="companyAddress != null">company_address = #{companyAddress},</if>
+            <if test="recruitNumber != null">recruitNumber = #{recruitNumber},</if>
+            <if test="educationRequire != null">educationRequire = #{educationRequire},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="detail != null">detail = #{detail},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <!--批量修改岗位信息(根据id）-->
+    <update id="updateJobs" parameterType="com.qyzp.bean.Job">
+        UPDATE job
+        <foreach collection="users" item="user" separator=",">
+            <set>
+                <if test="uname != null">uname = #{user.uname},</if>
+                <if test="password != null">password = #{user.password},</if>
+            </set>
+            WHERE id = #{user.id}
+        </foreach>
+    </update>
+
+    <!--根据id删除用户-->
+    <delete id="deleteJobById" >
+        delete from job where id=#{id}
+    </delete>
+    <!--批量根据id删除用户-->
+    <delete id="deleteCompanyByIds" >
+        delete from company where id IN
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

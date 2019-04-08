@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhuoyue.dao.UserAccountDao">
+
+    <resultMap id="UserAccountResultMap" type="com.zhuoyue.bean.UserAccount">
+        <id property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="balance" column="balance"/>
+    </resultMap>
+
+    <!--列名为id的自增长为true -->
+    <insert id="addAccount"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO table_account(user_id,balance)VALUE (#{user_id},#{balance})
+    </insert>
+
+    <!--根据用户id查询单个用户余额信息-->
+    <select id="queryAccountByUserId" resultType="com.zhuoyue.bean.UserAccount">
+        select * from  table_account where user_id=#{user_id}
+    </select>
+
+    <!--查询所有用户余额信息-->
+    <select id="queryAllAccount" resultMap="UserAccountResultMap">
+        select * from table_account
+    </select>
+
+    <!--修改用户余额信息(根据user_id）-->
+    <update id="updateAccount" parameterType="com.zhuoyue.bean.UserAccount">
+        UPDATE table_account SET balance=#{balance},version=version+1
+        WHERE user_id = #{user_id} AND version=#{version}
+    </update>
+
+    <!--根据id删除用户余额信息-->
+    <delete id="deleteAccountByUserId" >
+        delete from table_account where user_id=#{user_id}
+    </delete>
+
+</mapper>
+

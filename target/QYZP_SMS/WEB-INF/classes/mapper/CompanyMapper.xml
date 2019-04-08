@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.qyzp.dao.CompanyDao">
+
+    <resultMap id="CompanyResultMap" type="com.qyzp.bean.Company">
+        <id property="id" column="id"/>
+        <result property="uname" column="uname"/>
+        <result property="password" column="password"/>
+        <result property="roleType" column="role_type" />
+        <!--<result property="unitId" column="unit_id"/>&lt;!&ndash;java驼峰命名形式 数据库下划线形式&ndash;&gt;-->
+        <!--<association property="unit" column="unit_id" select="com.qyzp.dao.UnitDao.queryUnitByUserId"/>&lt;!&ndash;Unit对象与 unit_id属性绑定 select：子查询&ndash;&gt;-->
+        <!--<collection property="jobs" column="id" ofType="com.qyzp.bean.Job"
+                    select="com.qyzp.dao.JobDao.queryByCompanyId"/>-->
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="com.qyzp.bean.Company">
+        <id property="id" column="id"/>
+        <result property="uname" column="uname"/>
+        <result property="roleType" column="role_type" />
+        <result property="unitId" column="unit_id"/><!--java驼峰命名形式 数据库下划线形式-->
+        <association property="unit" column="unit_id" select="com.qyzp.dao.UnitDao.queryUnitByUserId"/><!--Unit对象与 unit_id属性绑定 select：子查询-->
+    </resultMap>
+
+    <resultMap id="detailResultMap" type="com.qyzp.bean.User">
+        <collection property="accounts" column="id" select="com.qyzp.dao.UserAccountDao.queryAccountByUserId"/>
+    </resultMap>
+
+    <!--列名为id的自增长为true --><!--注册-->
+    <insert id="registerCompany" parameterType="com.qyzp.bean.Company" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO company(uname,password,email,tel,companyName,address,headPic,detail,role_type) VALUE (#{uname},#{password},#{email},#{tel},#{companyName},#{address},#{headPic},#{detail},#{roleType})
+    </insert>
+
+    <!--批量列名为id的自增长为true --><!--注册-->
+    <insert id="registerCompanys"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user(uname,password,email,tel,role_type,sex,unit_id) VALUE
+        <foreach collection="array" item="user" separator=",">
+            (#{user.uname},#{user.password},#{user.email},#{user.tel},#{user.roleType},#{user.gender},#{user.unitId})
+        </foreach>
+    </insert>
+
+    <!--登录-->
+    <select id="loginByUname"   resultType="com.qyzp.bean.Company">
+        select * from company where uname=#{uname}
+    </select>
+    <select id="loginByPhone"   resultType="com.qyzp.bean.Company">
+        select * from company where tel=#{tel}
+    </select>
+    <select id="loginByEmail"   resultType="com.qyzp.bean.Company">
+        select * from company where email=#{email}
+    </select>
+
+    <!--查询所有公司信息-->
+    <select id="queryAllCompany" resultMap="CompanyResultMap">
+        select * from company
+    </select>
+    <!--根据公司id查询公司信息-->
+    <select id="queryCompanyById" resultMap="CompanyResultMap">
+        select * from company where id=#{id}
+    </select>
+
+    <!--修改用户信息(根据id）-->
+    <!--//uname,password,email,tel,companyName,address,headPic,detail,role_type-->
+    <update id="updateCompany" parameterType="com.qyzp.bean.Company">
+        UPDATE company
+        <set>
+            <if test="uname != null">uname = #{uname},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="tel != null">tel = #{tel},</if>
+            <if test="companyName != null">companyName = #{companyName},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="headPic != null">headPic = #{headPic},</if>
+            <if test="detail != null">detail = #{detail},</if>
+            <if test="roleType != null">role_type = #{roleType},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <!--修改密码-->
+    <!--Integer id, String oldPassword, String newPassword-->
+    <update id="updatePassword" >
+        UPDATE company set password=#{newPassword} where id=#{id}
+    </update>
+    <!--批量修改用户信息(根据id）-->
+    <update id="updateCompanys" parameterType="com.qyzp.bean.Company">
+        UPDATE company
+        <foreach collection="users" item="user" separator=",">
+            <set>
+                <if test="uname != null">uname = #{user.uname},</if>
+                <if test="password != null">password = #{user.password},</if>
+            </set>
+            WHERE id = #{user.id}
+        </foreach>
+    </update>
+
+    <!--根据id删除用户-->
+    <delete id="deleteCompanyById" >
+        delete from company where id=#{id}
+    </delete>
+    <!--批量根据id删除用户-->
+    <delete id="deleteCompanyByIds" >
+        delete from company where id IN
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

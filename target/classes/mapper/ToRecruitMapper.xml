@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qyzp.dao.ToRecruitDao">
+
+    <!--添加应聘信息-->
+    <!--id,user_id,user_name,job_id,job_name,company_id,company_name,expectSalary,resume_id,resume_name,interview-->
+    <insert id="insert" parameterType="com.qyzp.bean.ToRecruit" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO torecruit(user_id,user_name,job_id,job_name,company_id,company_name,expectSalary,resume_id,resume_name,interview)
+        VALUES(#{userId},#{userName},#{jobId},#{jobName},#{companyId},#{companyName},#{expectSalary},#{resumeId},#{resumeName},#{interview})
+    </insert>
+
+    <!--更新--><!--id,user_id,user_name,job_id,job_name,company_id,company_name,expectSalary,resume_id,resume_name,interview-->
+    <update id="update" parameterType="com.qyzp.bean.ToRecruit">
+        UPDATE torecruit
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName!= null">user_name = #{userName},</if>
+            <if test="jobId != null">job_id = #{jobId},</if>
+            <if test="jobName != null">job_name = #{jobName},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="companyName != null">company_name= #{companyName},</if>
+            <if test="expectSalary != null">expectSalary = #{expectSalary},</if>
+            <if test="resumeId != null">resume_id = #{resumeId},</if>
+            <if test="resumeName != null">resume_name = #{resumeName},</if>
+            <if test="interview != null">interview = #{interview},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        DELETE FROM torecruit WHERE id=#{id}
+    </delete>
+
+    <select id="select" resultType="com.qyzp.bean.ToRecruit">
+        SELECT * FROM torecruit WHERE id=#{id}
+    </select>
+    <!--根据用户id查询用户所属的应聘信息-->
+    <select id="selectByUserId" resultType="com.qyzp.bean.ToRecruit">
+        SELECT * FROM torecruit WHERE user_id=#{userId}
+    </select>
+    <!--根据用户id和是否收到面试通知查询用户所属的应聘信息-->
+    <select id="selectByUserIdAndInterview" resultType="com.qyzp.bean.ToRecruit">
+        SELECT * FROM torecruit WHERE user_id=#{userId} AND interview=#{interview}
+    </select>
+
+    <select id="selectAll" resultType="com.qyzp.bean.ToRecruit">
+        SELECT * FROM torecruit
+    </select>
+
+    <select id="selectTotal" resultType="java.lang.Integer">
+        SELECT count(*) FROM torecruit WHERE user_id=#{userId}
+    </select>
+
+    <!--//企业中心调用本模块-->
+    <!--//根据企业id查询简历id集合-->
+    <select id="selectRIdByCId" resultType="java.lang.Integer">
+        select resume_id from torecruit where company_id=#{companyId}
+    </select>
+    <!--//根据企业id查询通过面试的应聘信息-->
+    <select id="selectByCompanyIdAndInterview" resultType="com.qyzp.bean.ToRecruit">
+        SELECT * FROM torecruit WHERE company_id=#{companyId} AND interview=#{interview}
+    </select>
+</mapper>

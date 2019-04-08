@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhuoyue.dao.UserDao">
+
+    <resultMap id="UserResultMap" type="com.zhuoyue.bean.User">
+        <id property="id" column="id"/>
+        <result property="uname" column="uname"/>
+        <result property="password" column="password"/>
+        <result property="roleType" column="role_type" />
+        <result property="unitId" column="unit_id"/><!--java驼峰命名形式 数据库下划线形式-->
+        <association property="unit" column="unit_id" select="com.zhuoyue.dao.UnitDao.queryUnitByUserId"/><!--Unit对象与 unit_id属性绑定 select：子查询-->
+        <collection property="accounts" column="id" select="com.zhuoyue.dao.UserAccountDao.queryAccountByUserId"/>
+    </resultMap>
+
+    <resultMap id="baseResultMap" type="com.zhuoyue.bean.User">
+        <id property="id" column="id"/>
+        <result property="uname" column="uname"/>
+        <result property="roleType" column="role_type" />
+        <result property="unitId" column="unit_id"/><!--java驼峰命名形式 数据库下划线形式-->
+        <association property="unit" column="unit_id" select="com.zhuoyue.dao.UnitDao.queryUnitByUserId"/><!--Unit对象与 unit_id属性绑定 select：子查询-->
+    </resultMap>
+
+    <resultMap id="detailResultMap" type="com.zhuoyue.bean.User">
+        <collection property="accounts" column="id" select="com.zhuoyue.dao.UserAccountDao.queryAccountByUserId"/>
+    </resultMap>
+
+    <!--列名为id的自增长为true --><!--注册-->
+    <insert id="registerUser"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO table_user(uname,password,email,tel,role_type,gender) VALUE (#{uname},#{password},#{email},#{tel},#{role_type},#{gender})
+    </insert>
+    <!--批量列名为id的自增长为true --><!--注册-->
+    <insert id="registerUsers"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO table_user(uname,password,email,tel,role_type,gender,unit_id) VALUE
+        <foreach collection="array" item="user" separator=",">
+            (#{user.uname},#{user.password},#{user.email},#{user.tel},#{user.roleType},#{user.gender},#{user.unitId})
+        </foreach>
+    </insert>
+
+    <!--登录-->
+    <select id="loginByUname"   resultType="com.zhuoyue.bean.User">
+        select * from table_user where uname=#{uname}
+    </select>
+    <select id="loginByPhone"   resultType="com.zhuoyue.bean.User">
+        select * from table_user where tel=#{tel}
+    </select>
+    <select id="loginByEmail"   resultType="com.zhuoyue.bean.User">
+        select * from table_user where email=#{email}
+    </select>
+
+    <!--查询所有用户信息-->
+    <select id="queryAllUser" resultMap="baseResultMap">
+        select * from table_user
+    </select>
+    <!--根据用户id查询用户信息-->
+    <select id="queryUserById" resultMap="detailResultMap">
+        select * from  table_user where id=#{id}
+    </select>
+
+    <!--修改用户信息(根据id）-->
+    <update id="updateUser" parameterType="com.zhuoyue.bean.User">
+        UPDATE table_user
+        <set>
+            <if test="uname != null">uname = #{uname},</if>
+            <if test="password != null">password = #{password},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <!--批量修改用户信息(根据id）-->
+    <update id="updateUsers" parameterType="com.zhuoyue.bean.User">
+        UPDATE table_user
+        <foreach collection="users" item="user" separator=",">
+            <set>
+                <if test="uname != null">uname = #{user.uname},</if>
+                <if test="password != null">password = #{user.password},</if>
+            </set>
+            WHERE id = #{user.id}
+        </foreach>
+    </update>
+
+    <!--根据id删除用户-->
+    <delete id="deleteUserById" >
+        delete from table_user where id=#{id}
+    </delete>
+    <!--批量根据id删除用户-->
+    <delete id="deleteUserByIds" >
+        delete from table_user where id IN
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>

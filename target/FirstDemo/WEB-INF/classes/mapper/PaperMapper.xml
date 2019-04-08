@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhuoyue.dao.PaperDao">
+
+    <resultMap id="PaperResultMap" type="com.zhuoyue.bean.Paper">
+        <id property="PaperId" column="Paper_id"/>
+        <result property="PaperName" column="name"/>
+        <result property="PaperNum" column="number"/>
+        <result property="PaperDetail" column="detail"/>
+    </resultMap>
+
+    <insert id="addPaper" parameterType="com.zhuoyue.bean.Paper">
+        INSERT INTO Paper(Paper_id,name,number,detail) VALUES(#{PaperId},#{PaperName},#{PaperNum},#{PaperDetail})
+    </insert>
+
+    <select id="queryAllPaper" resultMap="PaperResultMap">
+        SELECT Paper_id,name,number,detail FROM Paper
+    </select>
+
+    <select id="queryById" resultType="Paper" parameterType="long">
+        SELECT Paper_id,name,number,detail
+        FROM Paper
+        WHERE Paper_id=#{PaperId}
+    </select>
+
+    <update id="updatePaper" parameterType="com.zhuoyue.bean.Paper">
+        UPDATE Paper
+        <set>
+            <if test="PaperName != null">NAME = #{PaperName},</if>
+            <if test="PaperNum != null">NUMBER = #{PaperNum},</if>
+            <if test="PaperDetail != null">detail = #{PaperDetail},</if>
+        </set>
+        WHERE Paper_id = #{PaperId}
+    </update>
+
+    <delete id="deletePaperById" parameterType="java.lang.Long">
+        DELETE FROM Paper WHERE Paper_id=#{PaperID}
+    </delete>
+</mapper>
