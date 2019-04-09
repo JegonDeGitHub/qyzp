@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qyzp.dao.ResumeDao">
     <insert id="insert" parameterType="com.qyzp.bean.Resume" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO resume(resume,user_id,resume_name,base_path,pic_path)
-         VALUES(#{resume},#{userId},#{resumeName},#{basePath},#{picPath})
+        INSERT INTO resume(resume,user_id,resume_name,pic_path)
+         VALUES(#{resume},#{userId},#{resumeName},#{picPath})
     </insert>
 
     <update id="update" parameterType="com.qyzp.bean.Resume">
@@ -14,7 +14,6 @@
             <if test="resume != null">resume = #{resume},</if>
             <if test="userId != null">user_id = #{userId},</if>
             <if test="resumeName != null">resume_name = #{resumeName},</if>
-            <if test="basePath != null">base_path = #{basePath},</if>
             <if test="picPath != null">pic_path = #{picPath},</if>
         </set>
         WHERE id = #{id}

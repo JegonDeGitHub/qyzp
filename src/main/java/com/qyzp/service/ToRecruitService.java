@@ -25,5 +25,11 @@ public interface ToRecruitService {
     List<Integer> selectRIdByCId(Integer companyId);
     //根据企业id查询通过面试的应聘信息
     List<ToRecruit> selectByCompanyIdAndInterview(Integer userId,String interview);
+    //根据简历id修改
+    int updateByResumeId(ToRecruit toRecruit);
+    //根据简历id 公司id 查询到求职者用这份简历投过哪些岗位id
+    List<Integer> selectJIdByRIdCId(Integer resumeId,Integer companyId);
+    //根据查回来的jobId集合和简历id查询求职者用这份简历和投过哪些应聘信息的id
+    List<Integer> selectIdByJIdRId(List<Integer> jids,Integer resumeId);
 
 }

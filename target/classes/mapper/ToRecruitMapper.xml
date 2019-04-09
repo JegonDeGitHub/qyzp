@@ -62,4 +62,33 @@
     <select id="selectByCompanyIdAndInterview" resultType="com.qyzp.bean.ToRecruit">
         SELECT * FROM torecruit WHERE company_id=#{companyId} AND interview=#{interview}
     </select>
+    <!--//根据简历id修改-->
+    <update id="updateByResumeId" parameterType="com.qyzp.bean.ToRecruit">
+        UPDATE torecruit
+        <set>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName!= null">user_name = #{userName},</if>
+            <if test="jobId != null">job_id = #{jobId},</if>
+            <if test="jobName != null">job_name = #{jobName},</if>
+            <if test="companyId != null">company_id = #{companyId},</if>
+            <if test="companyName != null">company_name= #{companyName},</if>
+            <if test="expectSalary != null">expectSalary = #{expectSalary},</if>
+            <if test="resumeId != null">resume_id = #{resumeId},</if>
+            <if test="resumeName != null">resume_name = #{resumeName},</if>
+            <if test="interview != null">interview = #{interview},</if>
+        </set>
+        WHERE resume_id = #{resumeId}
+    </update>
+    <!--//根据简历id 公司id 查询到求职者用这份简历投过哪些岗位id-->
+    <select id="selectJIdByRIdCId" resultType="java.lang.Integer">
+        select job_id from torecruit where resume_id=#{resumeId} and company_id=#{companyId}
+    </select>
+    <!--//根据查回来的jobId集合和简历id查询求职者用这份简历和投过哪些应聘信息的id-->
+    <select id="selectIdByJIdRId" resultType="java.lang.Integer">
+        SELECT id FROM torecruit WHERE  resume_id=#{resumeId} and job_id in
+        <foreach collection="jids" index="index" item="jids" open="(" separator="," close=")">
+            #{jids}
+        </foreach>
+    </select>
+
 </mapper>

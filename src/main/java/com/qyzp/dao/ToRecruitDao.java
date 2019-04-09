@@ -26,4 +26,10 @@ public interface ToRecruitDao {
     List<Integer> selectRIdByCId(Integer companyId);
     //根据企业id查询通过面试的应聘信息
     List<ToRecruit> selectByCompanyIdAndInterview(@Param("companyId") Integer userId,@Param("interview") String interview);
+    //根据简历id修改
+    int updateByResumeId(ToRecruit toRecruit);
+    //根据简历id 公司id 查询到求职者用这份简历投过哪些岗位id
+    List<Integer> selectJIdByRIdCId(@Param("resumeId") Integer resumeId,@Param("companyId") Integer companyId);
+    //根据查回来的jobId集合和简历id查询求职者用这份简历和投过哪些应聘信息
+    List<Integer> selectIdByJIdRId(@Param("jids") List<Integer> jids,@Param("resumeId") Integer resumeId);
 }

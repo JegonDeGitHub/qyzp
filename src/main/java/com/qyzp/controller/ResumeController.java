@@ -39,7 +39,7 @@ public class ResumeController extends BaseApiController{
         }
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public Map<String,Object> update(Resume resume){
         if(resumeService.update(resume)){
             return resp(200,"修改成功！",null);

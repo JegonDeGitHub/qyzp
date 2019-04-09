@@ -5,7 +5,6 @@ public class Resume {
     private String resume;
     private Integer userId;
     private String resumeName;
-    private String basePath;
     private String picPath;
 
     public Integer getId() {
@@ -38,14 +37,6 @@ public class Resume {
 
     public void setResumeName(String resumeName) {
         this.resumeName = resumeName;
-    }
-
-    public String getBasePath() {
-        return basePath;
-    }
-
-    public void setBasePath(String basePath) {
-        this.basePath = basePath;
     }
 
     public String getPicPath() {

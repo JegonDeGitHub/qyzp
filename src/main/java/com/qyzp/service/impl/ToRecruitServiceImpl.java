@@ -30,6 +30,21 @@ public class ToRecruitServiceImpl implements ToRecruitService {
     }
 
     @Override
+    public int updateByResumeId(ToRecruit toRecruit) {
+        return toRecruitDao.updateByResumeId(toRecruit);
+    }
+
+    @Override
+    public List<Integer> selectJIdByRIdCId(Integer resumeId, Integer companyId) {
+        return toRecruitDao.selectJIdByRIdCId(resumeId,companyId);
+    }
+
+    @Override
+    public List<Integer> selectIdByJIdRId(List<Integer> jids, Integer resumeId) {
+        return toRecruitDao.selectIdByJIdRId(jids, resumeId);
+    }
+
+    @Override
     public List<ToRecruit> selectByUserId(Integer userId) {
         return toRecruitDao.selectByUserId(userId);
     }
